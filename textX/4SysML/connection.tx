@@ -1,0 +1,147 @@
+/*
+* Connection grammar
+* -------------
+* A connection is...
+*/
+import kernel
+import attribute
+
+Connection:
+	OAInteraction | CommunicationMean | FunctionalChainInvolvementLink | FunctionalChainInvolvementFunction |
+	FunctionalChainAbstractCapabilityInvolvement | FunctionalChainInvolvement | 
+	EntityOperationalCapabilityInvolvement | FunctionalChainReference | AbstractFunctionAbstractCapabilityInvolvement |
+	InterfaceTrace
+;
+
+InterfaceTrace:
+	'connection' name=ElementName DefinedByKeyword 'InterfaceTrace'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName ';'
+;
+
+OAInteractionBodyElement:
+	Attribute
+;
+
+OAInteraction:
+	'connection' name = ElementName DefinedByKeyword 'OAInteraction'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements*= OAInteractionBodyElement '}'
+	)
+;
+
+CommunicationMeanBodyElement:
+	Attribute
+;
+
+CommunicationMean:
+	'connection' name = ElementName DefinedByKeyword 'CommunicationMean'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements*= CommunicationMeanBodyElement '}'
+	)
+;
+
+FunctionalChainInvolvementLinkBodyElement:
+	Attribute
+;
+
+FunctionalChainInvolvementLink:
+	'connection' name = ElementName DefinedByKeyword 'FunctionalChainInvolvementLink'
+		'connect' ('functionalExchange' ReferencesKeyword)? functionalExchange=QualifiedName
+		'to' ('functionalChain' ReferencesKeyword)? functionalChain=QualifiedName
+	(
+		';'
+		| '{' containedElements*= FunctionalChainInvolvementLinkBodyElement '}'
+	)
+;	
+
+FunctionalChainInvolvementFunctionBodyElement:
+	Attribute
+;
+
+FunctionalChainInvolvementFunction:
+	'connection' name = ElementName DefinedByKeyword 'FunctionalChainInvolvementFunction'
+		'connect' ('function' ReferencesKeyword)? function=QualifiedName
+		'to' ('functionalChain' ReferencesKeyword)? functionalChain=QualifiedName 
+	(
+		';'
+		| '{' containedElements*= FunctionalChainInvolvementFunctionBodyElement '}'
+	)
+;
+
+FunctionalChainAbstractCapabilityInvolvementBodyElement:
+	Attribute
+;
+
+FunctionalChainAbstractCapabilityInvolvement:
+	'connection' name = ElementName DefinedByKeyword 'FunctionalChainAbstractCapabilityInvolvement'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements*= FunctionalChainAbstractCapabilityInvolvementBodyElement '}'
+	)
+;
+
+FunctionalChainInvolvementBodyElement:
+	Attribute
+;
+
+FunctionalChainInvolvement:
+	'connection' name = ElementName DefinedByKeyword 'FunctionalChainInvolvement'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements*= FunctionalChainInvolvementBodyElement '}'
+	)
+;
+
+EntityOperationalCapabilityInvolvementBodyElement:
+	Attribute
+;
+
+EntityOperationalCapabilityInvolvement:
+	'connection' name = ElementName DefinedByKeyword 'EntityOperationalCapabilityInvolvement'
+		'connect' ('entity' ReferencesKeyword)? entity=QualifiedName
+		'to' ('capability' ReferencesKeyword)? capability=QualifiedName
+	(
+		';'
+		| '{' containedElements*= EntityOperationalCapabilityInvolvementBodyElement '}'
+	)
+;
+    
+FunctionalChainReferenceBodyElement:
+	Attribute
+;
+
+FunctionalChainReference:
+	'connection' name = ElementName DefinedByKeyword 'FunctionalChainReference'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements*= FunctionalChainReferenceBodyElement '}'
+	)
+;
+
+AbstractFunctionAbstractCapabilityInvolvementBodyElement:
+	Attribute
+;
+
+AbstractFunctionAbstractCapabilityInvolvement:
+	'connection' name = ElementName DefinedByKeyword 'AbstractFunctionAbstractCapabilityInvolvement'
+		'connect' ('function' ReferencesKeyword)? function=QualifiedName
+		'to' ('capability' ReferencesKeyword)? capability=QualifiedName
+	(
+		';'
+		| '{' containedElements*= AbstractFunctionAbstractCapabilityInvolvementBodyElement '}'
+	)
+;
+

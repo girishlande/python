@@ -1,0 +1,21 @@
+RobotModel:
+	'start'
+		commands*=Command
+	'end'
+;
+
+Command:
+	MoveCommand | InitialCommand
+;
+
+MoveCommand:
+	direction = Direction (steps=INT)?
+;
+
+InitialCommand:
+	'initial' x=INT ',' y=INT
+;
+
+Direction:
+	"Up" | "Down" | "Left" | "Right"
+;

@@ -1,0 +1,91 @@
+/*
+* Part grammar
+* -------------
+* A part is...
+*/
+import kernel
+import attribute
+import constraint
+import allocation
+import connection
+import port
+import interface
+import state
+
+Part:
+	Entity | SystemComponent | LogicalComponent | PhysicalComponent
+;
+
+EntityBodyElement:
+	Attribute
+	| Constraint
+	| Entity
+	| CommunicationMean
+	| ComponentFunctionalAllocation
+	| StateMachine
+;
+
+Entity:
+	'part' name = ElementName DefinedByKeyword 'Entity' (
+		';'
+		| '{' containedElements *= EntityBodyElement '}'
+	)
+;
+
+SystemComponentBodyElement:
+	Attribute
+	| Constraint
+	| SystemComponent
+	| ComponentPort
+	| ComponentExchange
+	| PhysicalPort
+	| PhysicalLink
+	| ComponentFunctionalAllocation
+	| StateMachine
+;
+
+SystemComponent:
+	'part' name = ElementName DefinedByKeyword 'SystemComponent' (
+		';'
+		| '{' containedElements *= SystemComponentBodyElement '}'
+	)
+;
+
+LogicalComponentBodyElement:
+	Attribute
+	| Constraint
+	| LogicalComponent 
+	| ComponentPort 
+	| ComponentExchange 
+	| PhysicalPort 
+	| PhysicalLink 
+	| ComponentFunctionalAllocation 
+	| StateMachine
+;
+
+LogicalComponent:
+	'part' name = ElementName DefinedByKeyword 'LogicalComponent' (
+		';'
+		| '{' containedElements *= LogicalComponentBodyElement '}'
+	)
+;
+
+PhysicalComponentBodyElement:
+	Attribute
+	| Constraint
+	| PhysicalPort 
+	| ComponentPort 
+	| ComponentExchange 
+	| PhysicalLink 
+	| PhysicalComponent 
+	| PartDeploymentLink 
+	| ComponentFunctionalAllocation 
+	| StateMachine
+;
+
+PhysicalComponent:
+	'part' name = ElementName DefinedByKeyword 'PhysicalComponent'  (
+		';'
+		| '{' containedElements *= PhysicalComponentBodyElement '}'
+	)
+;

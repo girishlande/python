@@ -1,0 +1,5 @@
+package 'PartDefinitionExample' {
+	Part 'Engine' {
+	
+	}
+}

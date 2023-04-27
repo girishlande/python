@@ -1,0 +1,52 @@
+import kernel
+import attribute
+
+Allocation:
+	ExchangeItemAllocation | PortAllocation | ComponentPortAllocation | PartDeploymentLink | ComponentExchangeFunctionalExchangeAllocation | ComponentFunctionalAllocation
+;
+
+ExchangeItemAllocation:
+	'allocation' name = ElementName DefinedByKeyword 'ExchangeItemAllocation'
+		'allocate' ('allocatedItem' ReferencesKeyword)? allocatedItem = QualifiedName
+		'to' ('allocatingInterface' ReferencesKeyword)? allocatingInterface = QualifiedName 
+		('{' '}' | ';')
+;
+
+
+PortAllocation:
+	'allocation' name=ElementName DefinedByKeyword 'PortAllocation'
+		'allocate' ('allocatedPort' ReferencesKeyword)? allocatedPort=QualifiedName
+		'to' ('allocatingPort' ReferencesKeyword)? allocatingPort=QualifiedName
+		('{' '}' | ';')
+;
+
+ComponentPortAllocation:
+	'allocation' name=ElementName DefinedByKeyword 'ComponentPortAllocation'
+		'allocate' ('allocatedPort' ReferencesKeyword)? allocatedPort=QualifiedName
+		'to' ('allocatingPort' ReferencesKeyword)? allocatingPort=QualifiedName
+		('{' '}' | ';')
+;
+
+PartDeploymentLink:
+	'allocation' name=ElementName DefinedByKeyword 'PartDeploymentLink'
+		'allocate' ('deployed' ReferencesKeyword)? deployed=QualifiedName
+		'to' ('deploying' ReferencesKeyword)? deploying=QualifiedName
+		('{' '}' | ';')
+;
+
+
+ComponentFunctionalAllocation:
+	'allocation' name=ElementName DefinedByKeyword 'ComponentFunctionalAllocation'
+		'allocate' ('function' ReferencesKeyword)? function=QualifiedName
+		'to' ('component' ReferencesKeyword)? component=QualifiedName
+		('{' '}' | ';')
+	'perform' performFunction = QualifiedName ';'
+;
+
+ComponentExchangeFunctionalExchangeAllocation:
+	'allocation' name=ElementName DefinedByKeyword 'ComponentExchangeFunctionalExchangeAllocation'
+		'allocate' ('functionalExchange' ReferencesKeyword)? functionalExchange=QualifiedName
+		'to' ('componentExchange' ReferencesKeyword)? componentExchange=QualifiedName
+		('{' '}' | ';')
+;
+

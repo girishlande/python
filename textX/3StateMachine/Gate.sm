@@ -1,0 +1,38 @@
+commands
+	washing
+	eating
+	running
+	walking
+end
+
+events
+	aaa  
+	bbb
+	ccc
+	ddd
+end
+
+
+state AA
+	actions {washing}
+	bbb => BB
+	ccc => CC
+end
+
+state BB
+	actions {eating}
+	ddd => DD
+	ccc => CC
+end
+
+state CC
+	actions {running}
+	ddd => DD
+	aaa => AA
+end
+
+state DD
+	actions {walking}
+	aaa => AA
+	bbb => BB
+end

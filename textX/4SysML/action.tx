@@ -1,0 +1,92 @@
+/*
+* Action grammar
+* -------------
+* An action is...
+*/
+import kernel
+import attribute
+import port
+import connection
+import interface
+
+Action:
+	 OperationalActivity | SystemFunction | LogicalFunction | PhysicalFunction | OperationalProcess
+;
+
+FunctionType:
+	'SystemFunction' | 'LogicalFunction' | 'OperationalActivity' | 'PhysicalFunction'
+;
+
+
+OperationalActivityBodyElement:
+	Attribute
+	| OperationalProcess
+	| OperationalActivity
+	| OAInteraction
+;
+
+OperationalActivity:
+	'action' name = ElementName DefinedByKeyword 'OperationalActivity'
+	(';' | '{' containedElements*=OperationalActivityBodyElement '}')
+;
+
+SystemFunctionBodyElement:
+	Attribute
+	| FunctionInputPort
+	| FunctionOutputPort
+	| SystemFunction
+	| FunctionalExchange
+;
+
+SystemFunction:
+	'action' name = ElementName DefinedByKeyword 'SystemFunction'
+	(';' | '{' containedElements*=SystemFunctionBodyElement '}')
+;
+
+LogicalFunctionBodyElement:
+	Attribute
+	| FunctionInputPort
+	| FunctionOutputPort
+	| LogicalFunction
+	| FunctionalExchange
+;
+
+LogicalFunction:
+	'action' name = ElementName DefinedByKeyword 'LogicalFunction'
+	(';' | '{' containedElements*=LogicalFunctionBodyElement '}')
+;
+
+PhysicalFunctionBodyElement:
+	Attribute
+	| FunctionInputPort
+	| FunctionOutputPort
+	| PhysicalFunction
+	| FunctionalExchange
+;
+
+PhysicalFunction:
+	'action' name = ElementName DefinedByKeyword 'PhysicalFunction'
+	(';' | '{' containedElements*=PhysicalFunctionBodyElement '}')
+;
+
+OperationalProcessBodyElement:
+	Attribute
+	| FunctionalChainInvolvementLink
+	| FunctionalChainInvolvementFunction
+;
+
+OperationalProcess:
+	'action' name = ElementName DefinedByKeyword 'OperationalProcess'
+	(';' | '{' containedElements*=OperationalProcessBodyElement '}')
+;
+
+FunctionalChainBodyElement:
+	Attribute
+	| FunctionalChainInvolvementLink
+	| FunctionalChainInvolvementFunction
+;
+
+FunctionalChain:
+	'action' name = ElementName DefinedByKeyword 'FunctionalChain'
+	(';' | '{' containedElements*=FunctionalChainBodyElement '}')
+;

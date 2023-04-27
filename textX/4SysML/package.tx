@@ -1,0 +1,39 @@
+/*
+* Package grammar
+* -------------
+* A package is a viewpoint namespace and organizational container of Elements and Packages
+*/
+import kernel
+import attribute
+import item
+import allocation
+import constraint
+import action
+import connection
+import interface
+import part
+import case
+
+
+PackageBodyElement:
+	Attribute
+	| Package
+	| Item
+	| Constraint
+	| Allocation
+	| Case
+	| Action
+	| Connection
+	| Interface
+	| Part
+	| Import
+;
+
+Package:
+	( visibility = VisibilityIndicator )? 'package' name = ElementName 
+	(';' 
+		| '{' (containedElements*=PackageBodyElement) '}'
+	)
+;
+
+

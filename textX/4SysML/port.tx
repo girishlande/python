@@ -1,0 +1,72 @@
+/*
+* Port grammar
+* -------------
+* A port is...
+*/
+import kernel
+import attribute
+import allocation
+import item
+
+Port:
+	ComponentPort | PhysicalPort | FunctionInputPort | FunctionOutputPort
+;
+
+FunctionPortBodyElement:
+	Attribute
+	| ExchangeItems
+;
+
+FunctionInputPort:
+	'in' 'port' name=ElementName DefinedByKeyword 'FunctionInputPort' (
+		';'
+		| '{' containedElements*= FunctionPortBodyElement '}'
+	)
+;
+
+FunctionOutputPort:
+	'out' 'port' name=ElementName DefinedByKeyword 'FunctionOutputPort' (
+		';'
+		| '{' containedElements*= FunctionPortBodyElement '}'
+	)
+;
+
+RequiredInterfaces:
+	ReferenceKeyword 'item' RedefinesKeyWord 'requiredInterfaces' '=' (
+	'(' interfaces *= QualifiedName[','] ')'
+	| interfaces = QualifiedName
+	)  ';'	
+;
+
+ProvidedInterfaces:
+	ReferenceKeyword 'item' RedefinesKeyWord 'providedInterfaces' '=' (
+	'(' interfaces *= QualifiedName[','] ')'
+	| interfaces = QualifiedName
+	)  ';'
+;
+
+ComponentPortBodyElement:
+	Attribute
+	| RequiredInterfaces
+	| ProvidedInterfaces
+	| PortAllocation
+;
+
+ComponentPort:
+	'port' name = ElementName DefinedByKeyword 'ComponentPort' ( 
+		';'
+		| '{' containedElements*= ComponentPortBodyElement '}'
+	)
+;
+
+PhysicalPortBodyElement:
+	Attribute
+	| ComponentPortAllocation
+;
+
+PhysicalPort:
+	'port' name = ElementName DefinedByKeyword 'PhysicalPort' ( 
+		';'
+		| '{' containedElements*= PhysicalPortBodyElement '}'
+	)
+;

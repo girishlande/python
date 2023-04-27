@@ -1,0 +1,92 @@
+/*
+* State grammar
+* -------------
+* A state is...
+*/
+import kernel
+import attribute
+import constraint
+import item
+import action
+import interface
+
+StateMachineBodyElement:
+	Attribute
+	| States
+	| Transition
+;
+StateMachine:
+	'state' name=ElementName DefinedByKeyword 'StateMachine' (
+		';'
+		| '{' containedElements *= StateMachineBodyElement '}'
+	)
+;
+
+
+State:
+	'state' name=ElementName DefinedByKeyword 'State'  (
+		';'
+		| '{' containedElements *= StateMachineBodyElement '}'
+	)
+;
+
+Mode:
+	'state' name=ElementName DefinedByKeyword 'Mode'  (
+		';'
+		| '{' containedElements *= StateMachineBodyElement '}'
+	)
+;
+
+States:
+	FinalState | InitialState | State | Mode | PseudoStates
+;
+
+PseudoStates:
+	DeepHistoryPseudoState | ChoicePseudoState
+;
+
+InitialState:
+	'entry' ';' 'then' entry=QualifiedName ';'
+;
+
+AcceptEvent:
+	'accept' eventName=ElementName DefinedByKeyword ( 'ChangeEvent' | FunctionType | FunctionalExchangeType )
+	(
+		'if' '{'
+			containedElements*=Attribute
+			(
+			'language' language=STRING
+			body = /(?ms)\/\*(.*?)\*\//
+			)?
+		'}'
+	)?
+;
+
+Transition:
+	'transition' name=ElementName
+		'first' first=QualifiedName
+		(AcceptEvent)?
+		'then'  then=QualifiedName
+	';'
+;
+
+FinalState:
+	'state' name=ElementName DefinedByKeyword 'FinalState' (
+		';'
+		| '{' containedElements *= Attribute '}'
+	)
+;
+
+ChoicePseudoState:
+	'state' name=ElementName DefinedByKeyword 'ChoicePseudoState' (
+		';'
+		| '{' containedElements *= Attribute '}'
+	)
+;
+
+DeepHistoryPseudoState:
+	'state' name=ElementName DefinedByKeyword 'DeepHistoryPseudoState' (
+		';'
+		| '{' containedElements *= Attribute '}'
+	)
+;

@@ -1,0 +1,72 @@
+/*
+* Interface grammar
+* -------------
+* A connection is...
+*/
+import kernel
+import attribute
+import allocation
+import connection
+import item
+
+Interface:
+	FunctionalExchange | ComponentExchange | PhysicalLink
+;
+
+FunctionalExchangeType:
+	'FunctionalExchange'
+;
+
+FunctionalExchangeBodyElement:
+	Attribute
+	| ExchangedItems
+;
+
+FunctionalExchange:
+	'interface' name = ElementName DefinedByKeyword 'FunctionalExchange'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements *= FunctionalExchangeBodyElement '}'
+	)
+;
+
+ComponentExchangeBodyElement:
+	Attribute
+	| ConvoyedInformation
+	| InterfaceTrace
+	| ComponentExchangeFunctionalExchangeAllocation
+;
+
+ComponentExchange:
+	'interface' name = ElementName DefinedByKeyword 'ComponentExchange'
+		'connect' ('source' ReferencesKeyword)? source=QualifiedName
+		'to' ('target' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements *= ComponentExchangeBodyElement '}'
+	)
+;
+
+PhysicalLinkBodyElement:
+	Attribute
+	| ConvoyedInformation
+;
+
+PhysicalLink:
+	'interface' name = ElementName DefinedByKeyword 'PhysicalLink'
+		'connect' ('sourcePhysicalPort' ReferencesKeyword)? source=QualifiedName
+		'to' ('targetPhysicalPort' ReferencesKeyword)? target=QualifiedName
+	(
+		';'
+		| '{' containedElements *= PhysicalLinkBodyElement '}'
+	)
+;
+
+ConvoyedInformation:
+	ReferenceKeyword RedefinesKeyWord 'convoyedInformations' '=' (
+		'('  convoyedInformations *= QualifiedName[','] ')'
+		| convoyedInformations = QualifiedName
+	)  ';'
+;

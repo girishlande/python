@@ -1,0 +1,98 @@
+/*
+* Item grammar
+* -------------
+* An item is...
+*/
+import kernel
+import attribute
+import constraint
+import allocation
+
+Item:
+	InterfaceItem | ExchangeItemElement| ExchangeItem | Class | ChangeEvent | TimeEvent
+;
+
+ChangeEventBodyElement:
+	Attribute
+	| Constraint
+;
+
+ChangeEvent:
+	'item' name = ElementName DefinedByKeyword 'ChangeEvent' 
+	(';' | '{' containedElements*=ChangeEventBodyElement '}')
+;
+
+TimeEventBodyElement:
+	Attribute
+	| Constraint
+;
+
+TimeEvent:
+	'item' name = ElementName DefinedByKeyword 'TimeEvent' 
+	(';' | '{' containedElements*=TimeEventBodyElement '}')
+;
+
+InterfaceItemBodyElement:
+	Attribute
+	| ExchangeItemAllocation
+;
+
+InterfaceItem:
+	'item' name = ElementName DefinedByKeyword  'Interface'
+	(';' | '{' containedElements*=InterfaceItemBodyElement '}')
+;
+
+ExchangeItemBodyElement:
+	Attribute
+	| ExchangeItemElement
+;
+
+ExchangeItem:
+	'item' name = ElementName DefinedByKeyword  'ExchangeItem'
+	(';' | '{' containedElements*=ExchangeItemBodyElement '}')
+;
+
+
+ExchangeItemElementBodyElement:
+	Attribute
+	| ExchangeItemType
+	| ExchangeItemElement
+;
+
+ExchangeItemElement:
+	'item' name = ElementName DefinedByKeyword 'ExchangeItemElement'
+	(';' | '{' containedElements*=ExchangeItemElementBodyElement '}')
+;
+
+ExchangeItemType:
+	ReferenceKeyword 'item' RedefinesKeyWord 'type' '=' type=QualifiedName ';'
+;
+
+ClassBodyElement:
+	Attribute
+;
+
+Class:
+	'item' name=ElementName DefinedByKeyword 'Class' (';' | '{' containedElements*=ClassBodyElement '}')
+	| 'item' name=ElementName SubsetsKeyword superClass=QualifiedName (';' | '{' containedElements*=ClassBodyElement '}')
+;
+
+ExchangedItems:
+	ReferenceKeyword 'item' RedefinesKeyWord 'exchangedItems' '=' 
+	( '(' exchangedItems *= QualifiedName[','] ')' 
+		| exchangedItems = QualifiedName)
+	';'
+	'message' RedefinesKeyWord 'transfer' 'of' 'exchangedItems' ';'
+	
+;
+
+InOut:
+	'in' | 'out'
+;
+
+ExchangeItems:
+	direction=InOut 'item' RedefinesKeyWord 'exchangeItems' '='
+	( '(' exchangeItems *= QualifiedName[','] ')' 
+	   |  exchangeItems = QualifiedName
+	) ';'	
+;

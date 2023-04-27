@@ -1,0 +1,79 @@
+/*
+* Case grammar
+* -------------
+* A case is...
+*/
+import kernel
+import attribute
+import action
+
+Subject:
+	'subject' RedefinesKeyWord 'subj' '=' subject=QualifiedName ';'
+;
+
+Actors:
+	ReferenceKeyword 'part' RedefinesKeyWord 'actors' '=' (
+		'(' actors *= QualifiedName[','] ')' 
+		| actors = QualifiedName
+	) ';'	
+;
+
+Case:
+	OperationalCapability | Capability | Mission | CapabilityRealization
+;
+
+OperationalCapabilityBodyElement:
+	Attribute
+	| Subject
+	| Actors
+	| OperationalProcess
+;
+
+OperationalCapability:
+	'use' 'case' name=ElementName DefinedByKeyword 'OperationalCapability' (
+		';'
+		| '{' containedElements *= OperationalCapabilityBodyElement '}'
+	)
+;
+
+CapabilityBodyElement:
+	Attribute
+	| Subject
+	| Actors
+	| FunctionalChain
+;
+
+Capability:
+	'use' 'case' name=ElementName DefinedByKeyword 'Capability'  (
+		';'
+		| '{' containedElements *= CapabilityBodyElement '}'
+	)
+;
+
+CapabilityRealizationBodyElement:
+	Attribute
+	| Subject
+	| Actors
+	| FunctionalChain
+;
+
+CapabilityRealization:
+	'use' 'case' name=ElementName DefinedByKeyword 'CapabilityRealization'  (
+		';'
+		| '{' containedElements *= CapabilityRealizationBodyElement '}'
+	)
+;
+
+MissionBodyElement:
+	Attribute
+	| Subject
+	| Actors
+	| FunctionalChain
+;
+
+Mission:
+	'use' 'case' name=ElementName DefinedByKeyword 'Mission' (
+		';'
+		| '{' containedElements *= MissionBodyElement '}'
+	)
+;

@@ -1,0 +1,27 @@
+/*
+* Constraint grammar
+* -------------
+* A constraint is...
+*/
+import kernel
+import attribute
+
+ConstraintModel:
+	containedElements *= Constraint
+;
+
+ConstraintTextBody:
+	/(?ms)\/\*(.*?)\*\//
+;
+
+Constraint:
+	'constraint' name=ElementName
+	(
+		';'
+		|'{' containedElements*=Attribute
+			(
+				'language' language=STRING
+				body = ConstraintTextBody
+			)? '}'
+	)
+;

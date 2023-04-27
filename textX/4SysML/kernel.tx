@@ -1,0 +1,72 @@
+
+KernelModel:
+	containedElements *= KernelElement
+;
+
+KernelElement:
+	Import | Doc | CommentSummary
+;
+
+// Naming Rules
+ElementName:
+	UNRESTRICTED_NAME | ID
+;
+
+//"'"- /[^'']*/  "'"-
+UNRESTRICTED_NAME:
+	"'" /[^'']*/  "'"
+;
+
+QualifiedName:
+	ElementName('::'ElementName)*('.'ElementName)*
+;
+
+// Indicator
+VisibilityIndicator:
+	'public' | 'private'| 'protected'
+;
+
+// Keywords
+ReferenceKeyword :
+	'ref'
+;
+
+ReferencesKeyword :
+	'::>' | 'references'
+;
+
+DefinedByKeyword :
+	':' | 'defined' 'by'
+;
+
+RedefinesKeyWord:
+	':>>' | 'redefines'
+;
+
+SubsetsKeyword :
+	':>' | 'subsets'
+;
+
+
+// Import Statement
+ImportFQN:
+	ElementName('::'ElementName)*( '::**' | '::*')*
+;
+
+Import:
+	( visibility = VisibilityIndicator )?  
+	'import' ( isImportAll ?= 'all' )?
+	name =	ImportFQN ';'
+;
+
+// Summary Comment
+CommentSummary:
+	'comment' 'summary' summary = /\/\*(.*)\*\//
+;
+
+// Package documentation
+Doc:
+	'doc' /\/\*[\s\S]*?\*\//
+;
+
+

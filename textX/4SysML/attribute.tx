@@ -1,0 +1,134 @@
+/*
+* Attribute grammar
+* -------------
+* An attribute is...
+*/
+import kernel
+
+Attribute:
+	Doc
+	| CommentSummary
+	| AttributeUsage
+	| PropertyValue
+	| PropertyValueGroup
+	| AppliedPropertyValueList
+	| AppliedPropertyValueGroupList
+;
+
+AttributeUsage:
+	'attribute' RedefinesKeyWord name = ElementName '=' value=AttributeUsageValueType ';'
+;
+
+AttributeUsageValueType:
+	StringAttribute | BooleanAttribute | NumberAttribute | EnumAttribute
+;
+
+StringAttribute:
+	STRING
+;
+
+BooleanAttribute:
+	BOOL
+;
+
+NumberAttribute:
+	RationalAttribute | IntegerAttribute
+;
+
+RationalAttribute:
+	FLOAT
+;
+
+IntegerAttribute:
+	INT
+;
+
+EnumAttribute:
+	QualifiedName
+;
+
+PropertyValueGroup:
+	'attribute' name = ElementName DefinedByKeyword 'PropertyValueGroup' 
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+;
+
+PropertyValue:
+	BooleanValue | StringValue | NumberValue | EnumValue | EnumerationPropertyType
+;
+
+BooleanValue:
+	'attribute' name = ElementName DefinedByKeyword 'Boolean' '=' value=BOOL
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+;
+
+StringValue:
+	'attribute' name = ElementName DefinedByKeyword 'String' '=' value=STRING
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+	
+;
+
+NumberValue:
+	RationalValue | IntegerValue
+;
+
+RationalValue:
+	'attribute' name = ElementName DefinedByKeyword 'Rational' '=' value=FLOAT
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+	
+;
+
+IntegerValue:
+	'attribute' name = ElementName DefinedByKeyword 'Integer' '=' value=INT
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+	
+;
+
+EnumValue:
+	'attribute' name = ElementName '=' value=QualifiedName
+	( ';'
+	  | '{' containedElements *= Attribute '}'
+	)
+	
+;
+
+EnumerationPropertyTypeBodyElement:
+	Attribute | EnumerationLiteral
+;
+
+EnumerationLiteral:
+	'enum' name=ElementName ';'
+;
+
+EnumerationPropertyType:
+	'enum' 'def' name=ElementName (
+		';'
+		| '{' containedElements *= EnumerationPropertyTypeBodyElement '}'
+	)
+;
+AppliedPropertyValueGroupList:
+	(ReferenceKeyword)? 'attribute' 'appliedPropertyValueGroups' '=' 
+	(
+		'('  appliedPropertyValueGroups *= QualifiedName[','] ')' 
+		| appliedPropertyValueGroups = QualifiedName
+	)
+	';'
+;
+
+AppliedPropertyValueList:
+	(ReferenceKeyword)? 'attribute' 'appliedPropertyValues' '='
+	(
+		'(' appliedPropertyValues *= QualifiedName[','] ')'
+		| appliedPropertyValues = QualifiedName
+	)
+	';'
+;

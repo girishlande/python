@@ -1,0 +1,23 @@
+/*
+* Model grammar
+* -------------
+* A model is the root and contains only packages
+*/
+import kernel
+import attribute
+import action
+import allocation
+import case
+import connection
+import constraint
+import interface
+import item
+import package
+import part
+import port
+import state
+
+Model:
+	containedElements += Package
+;
+
