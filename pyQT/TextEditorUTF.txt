@@ -1,0 +1,74 @@
+import sys
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+
+class sysmlParserDialog(QWidget):
+    def __init__(self, parent=None):
+      super(sysmlParserDialog, self).__init__(parent)
+
+      self.sysmlButton = QPushButton("SysML Code")
+      self.sysmlButton.clicked.connect(self.getfiles)
+
+      label2 = QLabel("Output Code")
+      r1 = QHBoxLayout()
+      label2.setAlignment(Qt.AlignHCenter)
+      r1.addWidget(self.sysmlButton)
+      r1.addWidget(label2)
+
+      self.sysmlText = QPlainTextEdit()
+      self.outputText = QTextEdit()
+      font = QtGui.QFont()
+      font.setPointSize(12)
+      self.sysmlText.setFont(font)
+    
+      r2 = QHBoxLayout()
+      r2.addWidget(self.sysmlText)
+      r2.addWidget(self.outputText)
+
+      self.convertButton = QPushButton("CONVERT")
+
+      vbox = QVBoxLayout()
+
+      vbox.addLayout(r1)
+      vbox.addLayout(r2)
+      vbox.addWidget(self.convertButton)
+    
+      self.setLayout(vbox)
+      self.setWindowTitle("SysML parser")
+
+    def getfiles(self):
+      dlg = QFileDialog()
+      dlg.setFileMode(QFileDialog.AnyFile)
+      dlg.setNameFilters(["Sysml files (*.sysml)","Text files (*.txt)"])
+		
+      if dlg.exec_():
+         filenames = dlg.selectedFiles()
+         f = open(filenames[0], 'r')
+			
+         with f:
+            data = f.read()
+			
+            self.sysmlText.document().setPlainText(data)
+    
+    def setColor(self,index):
+        if index==1:
+            self.outputText.setStyleSheet("color: rgb(255,0,0)")
+        else:
+            self.outputText.setStyleSheet("color: rgb(0,153,0)")
+
+            
+				
+def main():
+   app = QApplication(sys.argv)
+    
+   ex = sysmlParserDialog()
+   screen = app.primaryScreen()
+   size = screen.size()
+   ex.resize(int(size.width()),int(size.height()*.9))
+   ex.show()
+   sys.exit(app.exec_())
+	
+if __name__ == '__main__':
+   main()
