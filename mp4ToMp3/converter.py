@@ -12,53 +12,19 @@ from youtubelistdownloder import *
 
 import scrapetube
 
-
-        
-    
+   
 def on_progress(stream, chunk, bytes_remaining):
     """Callback function"""
     total_size = stream.filesize
     bytes_downloaded = total_size - bytes_remaining
     pct_completed = bytes_downloaded / total_size * 100
     print(f"Status: {round(pct_completed, 2)} %")
- 
-class Delegate(QStyledItemDelegate):
-    def __init__(self, owner, choices):
-        super().__init__(owner)
-        self.items = choices
 
-    def createEditor(self, parent, option, index):
-        editor = QComboBox(parent)
-        editor.addItems(self.items)
-        return editor
-
-    def paint(self, painter, option, index):
-        if isinstance(self.parent(), QAbstractItemView):
-            self.parent().openPersistentEditor(index, 1)
-        QStyledItemDelegate.paint(self, painter, option, index)
-
-    def setEditorData(self, editor, index):
-        editor.blockSignals(True)
-        value = index.data(Qt.DisplayRole)
-        num = self.items.index(value)
-        editor.setCurrentIndex(num)
-        editor.blockSignals(False)
-
-    def setModelData(self, editor, model, index):
-        value = editor.currentText()
-        model.setData(index, value, Qt.EditRole)
-
-    def updateEditorGeometry(self, editor, option, index):
-        editor.setGeometry(option.rect)
-
+      
+    
 class Model(QAbstractTableModel):
     ActiveRole = Qt.UserRole + 1
     def __init__(self, datain, headerdata, parent=None):
-        """
-        Args:
-            datain: a list of lists\n
-            headerdata: a list of strings
-        """
         super().__init__()
         self.arraydata = datain
         self.headerdata = headerdata
@@ -146,6 +112,7 @@ class Main(QMainWindow):
         self.get_table_data()
         self.tableview = self.createTable()
         self.tableview.clicked.connect(self.tv_clicked_pos)
+        self.Links = []
 
         # Set the maximum value of row to the selected row
         self.selectrow = self.tableview.model().rowCount(QModelIndex())
@@ -251,7 +218,7 @@ class Main(QMainWindow):
         self.tableview.model().endInsertRows()
 
     def importFiles(self):
-        self.tableview.model().print_arraydata()
+        #self.tableview.model().print_arraydata()
         file_names = self.get_import_file_names()
         if file_names:
             for file_name in file_names:
@@ -267,14 +234,73 @@ class Main(QMainWindow):
         FILETOCONVERT.write_audiofile(mp3)
         FILETOCONVERT.close()
     
+    def convertFunc0(self):
+        if (len(self.links)<1):
+            return
+        for r in self.links[0]:
+            sourcefile = r[0]
+            destfile = r[1]
+            self.MP4ToMP3(sourcefile,destfile)
+            
+    def convertFunc1(self):
+        if (len(self.links)<2):
+            return
+        for r in self.links[1]:
+            sourcefile = r[0]
+            destfile = r[1]
+            self.MP4ToMP3(sourcefile,destfile)        
+    
+    def convertFunc2(self):
+        if (len(self.links)<3):
+            return
+        for r in self.links[2]:
+            sourcefile = r[0]
+            destfile = r[1]
+            self.MP4ToMP3(sourcefile,destfile)        
+        
+    def convertFunc3(self):
+        if (len(self.links)<4):
+            return
+        for r in self.links[3]:
+            sourcefile = r[0]
+            destfile = r[1]
+            self.MP4ToMP3(sourcefile,destfile)        
+    
+    def split_link(self,links,size):
+        for i in range(0,len(links),size):
+            yield links[i:i+size]
+        
     def convertFiles(self):
         print("Converting files")
         for i,r in enumerate(self.tabledata):
             sourcefile = r[0]
             destfile = r[1]
-            print(f"Source:{sourcefile} -> Dest:{destfile}")
-            thread = Thread(target=self.MP4ToMP3,args=(sourcefile,destfile))
-            thread.start()
+            #print(f"Source:{sourcefile} -> Dest:{destfile}")
+            #thread = Thread(target=self.MP4ToMP3,args=(sourcefile,destfile))
+            #thread.start()
+            
+        # Split Table data in 4 parts. And Convert it using 4 threads
+        size = ceil(len(self.tabledata)/4)
+        self.links = list(split_link(self.tabledata,size))
+
+        debug = False
+        if debug:
+            count = 1
+            for i in self.links:
+                print(f"\nPortion {count}")
+                count+=1
+                for j in i:
+                    print(j)
+        
+        t1 = threading.Thread(target=self.convertFunc0,name='C1')
+        t2 = threading.Thread(target=self.convertFunc1,name='C2')
+        t3 = threading.Thread(target=self.convertFunc2,name='C3')
+        t4 = threading.Thread(target=self.convertFunc3,name='C4')
+        t1.start()
+        t2.start()
+        t3.start()
+        t4.start()
+            
             
     def showDownloadComplete(self):
        msg = QMessageBox()

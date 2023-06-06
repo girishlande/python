@@ -27,7 +27,7 @@ def MP4ToMP3(mp4, mp3):
     FILETOCONVERT = AudioFileClip(mp4)
     FILETOCONVERT.write_audiofile(mp3)
     FILETOCONVERT.close()
-        
+
 def downloader1():
     for i in link[0]:
       yt = YouTube(i)
@@ -121,21 +121,6 @@ def downloadPlaylist(url,refpath):
     
     allfiles = files[0] + files[1] + files[2] + files[3]
     print("Downloaded files:")
-    threads = []
-    for i in allfiles:
-        f = FileRecord(i)
-        sourcefile = f.path
-        destfile = f.outfile
-        print(sourcefile)
-        print(destfile)
-        thread = Thread(target=MP4ToMP3,args=(sourcefile,destfile))
-        threads.append(thread)
-        thread.start()
-    
-    for thread in threads:
-        thread.join()
-    
-    print("Converting to Mp3 complete")
    
 if __name__ == "__main__":
     url = "https://www.youtube.com/watch?v=ehO-uRgtqEU&list=PLuO9GcLbR5sRKGBWNNfFlXOKuSbm9rUMc&index=2"
