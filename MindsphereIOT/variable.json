@@ -1,0 +1,11 @@
+{
+	"physicalVariable": "gear",   
+	"virtualVariable": "expseu_.Gear", 
+	"virtualVariableType": "",   
+	"physicalUnit": "",   
+	"virtualUnit": "",   
+	"physicalVariableDataType": "DOUBLE", 
+	"virtualVariableDataType": "",   
+	"virtualVariableIOType": "INPUT", 
+	"virtualVariableId": "Parameter_id" 
+}

@@ -1,0 +1,13 @@
+{
+    "scope": {
+        "shortCode": "nx"
+    },
+    "startTimestamp": "2023-01-16T00:00:00.000+00:00",
+    "endTimestamp": "2023-02-02T00:00:00.001+00:00",
+    "physicalAspect": "f25d508d820b494cb64a40832dd40cc8",
+    "name":"demo_5",
+    "physicalVariable": "gear",
+    "definition": {
+        "timezone": "Europe/Berlin"
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "name": "NX-Test Digital Twin Model_NEW_TEST_4",   
+    "description": "This is a test digital twin model for the purpose of testing a DTT workflow", 
+    "virtualApplication": null,
+    "virtualApplicationInstance": null,
+    "virtualDomainReferenceFile": "51c74409-31b9-4a59-a41a-8818605f71f6",
+    "scopes": [
+        {
+            "id": "4",   
+            "name": "NX CAD",
+            "shortCode": "nx"
+        }
+    ],
+    "digitalTwinPrototypes": [
+        {
+            "physicalEntityId": "dtclxint.Electrical_Vehicle", 
+            "physicalEntityName": "Electrical_Vehicle",   
+            "virtualEntityId": "NXAssyIdentifier",   
+            "virtualEntityName": "NXAssy_Name",  
+            "aspectVariablesMap": [
+                {
+                    "physicalAspect": "f25d508d820b494cb64a40832dd40cc8",  
+                    "virtualAspect": "NXAssy_Name",          
+                    "physicalAspectCategory": "dynamic",   
+                    "variables": []
+                }
+            ]
+        }
+    ],
+    "imageId": null,
+    "modelMetaData": {
+        "Test key": "Test value"
+    }
+}

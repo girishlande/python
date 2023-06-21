@@ -124,8 +124,10 @@ class Main(QMainWindow):
         self.importbtn.clicked.connect(self.importFiles)
         self.convertbtn = QPushButton('Convert')
         self.convertbtn.clicked.connect(self.convertFiles)
-        self.downloadbtn = QPushButton('Download Youtube video')
+        self.downloadbtn = QPushButton('Download Youtube Audio')
         self.downloadbtn.clicked.connect(self.downloadAndConvert)
+        self.downloadVideobtn = QPushButton('Download Youtube video')
+        self.downloadVideobtn.clicked.connect(self.downloadVideoBtnFunc)
         self.downloadlistbtn = QPushButton('Download youtube list')
         self.downloadlistbtn.clicked.connect(self.downloadList)
         self.downloadchannelbtn = QPushButton('Download youtube channel')
@@ -146,9 +148,10 @@ class Main(QMainWindow):
         self.grid_layout.addWidget(self.importbtn, 2, 2, 1, 1)
         self.grid_layout.addWidget(self.convertbtn, 2, 3, 1, 1)
         self.grid_layout.addWidget(self.downloadbtn, 2, 4, 1, 1)
-        self.grid_layout.addWidget(self.downloadlistbtn, 2, 5, 1, 1)
-        self.grid_layout.addWidget(self.downloadchannelbtn, 2, 6, 1, 1)
-        self.grid_layout.addWidget(self.downloadPathBtn, 2, 7, 1, 1)
+        self.grid_layout.addWidget(self.downloadVideobtn, 2, 5, 1, 1)
+        self.grid_layout.addWidget(self.downloadlistbtn, 2, 6, 1, 1)
+        self.grid_layout.addWidget(self.downloadchannelbtn, 2, 7, 1, 1)
+        self.grid_layout.addWidget(self.downloadPathBtn, 2, 8, 1, 1)
         
         self.grid_layout.addWidget(self.tableview, 1, 0, 1, 7)
         
@@ -342,14 +345,32 @@ class Main(QMainWindow):
                 self.refreshTableView()
         except:
             print("An error has occurred")
+    
+    def DownloadVideo(self,link):
+        youtubeObject = YouTube(link,on_progress_callback=on_progress)
+        youtubeObject = youtubeObject.streams.get_highest_resolution()
+        self.downloadFile = youtubeObject.default_filename
         
+        try:
+            youtubeObject.download(self.downloadpath)
+        except:
+            print("An error has occurred")    
+            
     def downloadAndConvert(self):
-        dlg = YoutubeDialog("Download youtube Video","Enter youtube video link")
+        dlg = YoutubeDialog("Download youtube Audio","Enter youtube link")
         if dlg.exec():
             print("lets Download URL:",dlg.url)
             self.Download(dlg.url)
         else:
             print("Cancel!")  
+            
+    def downloadVideoBtnFunc(self):
+        dlg = YoutubeDialog("Download youtube Video","Enter youtube link")
+        if dlg.exec():
+            print("lets Download URL:",dlg.url)
+            self.DownloadVideo(dlg.url)
+        else:
+            print("Cancel!")        
             
     def downloadList(self):
         dlg = YoutubeDialog("Download youtube playlist","Enter youtube playlist link")
@@ -394,6 +415,7 @@ if __name__ == '__main__':
     screen = app.primaryScreen()
     size = screen.size()
     main.resize(int(size.width()*.8),int(size.height()*.4))
+    #main.showMaximized()
     
     main.show()
     app.exec_()
