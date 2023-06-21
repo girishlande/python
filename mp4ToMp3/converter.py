@@ -1,3 +1,7 @@
+from __future__ import unicode_literals
+#import youtube_dl
+from yt_dlp import YoutubeDL
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -7,7 +11,7 @@ from pathlib import Path
 from pytube import YouTube
 from moviepy.editor import *
 from threading import Thread
-
+import breeze_resources
 from youtubelistdownloder import *
 
 import scrapetube
@@ -77,12 +81,13 @@ class Model(QAbstractTableModel):
 
 
 class YoutubeDialog(QDialog):
-    def __init__(self,title,msg):
+    def __init__(self,title,msg,audiovideoOption=False):
         super().__init__()
 
         self.setWindowTitle(title)
         self.url = ""
-
+        self.resize(400,100)
+        
         QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
         self.buttonBox = QDialogButtonBox(QBtn)
@@ -97,11 +102,23 @@ class YoutubeDialog(QDialog):
         self.layout.addWidget(message)
         self.layout.addWidget(urlText)
         self.layout.addWidget(self.buttonBox)
+        
+        self.downloadVideo = False
+        self.downloadvideoCheckBox = QCheckBox("Download Video")
+        self.downloadvideoCheckBox.stateChanged.connect(self.VideoCheck)
+        
+        if audiovideoOption:
+            self.layout.addWidget(self.downloadvideoCheckBox)
+            self.resize(400,120)
+            
         self.setLayout(self.layout)
-        self.resize(400,100)
+        
         
     def text_changed(self,s):
         self.url = s
+        
+    def VideoCheck(self):
+        self.downloadVideo = self.downloadvideoCheckBox.isChecked()
         
 class Main(QMainWindow):
     def __init__(self, parent=None):
@@ -144,16 +161,16 @@ class Main(QMainWindow):
 
         # create gridlayout
         self.grid_layout = QGridLayout()
-        self.grid_layout.addWidget(self.clearBtn, 2, 1, 1, 1)
-        self.grid_layout.addWidget(self.importbtn, 2, 2, 1, 1)
-        self.grid_layout.addWidget(self.convertbtn, 2, 3, 1, 1)
-        self.grid_layout.addWidget(self.downloadbtn, 2, 4, 1, 1)
-        self.grid_layout.addWidget(self.downloadVideobtn, 2, 5, 1, 1)
-        self.grid_layout.addWidget(self.downloadlistbtn, 2, 6, 1, 1)
-        self.grid_layout.addWidget(self.downloadchannelbtn, 2, 7, 1, 1)
-        self.grid_layout.addWidget(self.downloadPathBtn, 2, 8, 1, 1)
+        self.grid_layout.addWidget(self.clearBtn, 1, 1, 1, 1)
+        self.grid_layout.addWidget(self.importbtn, 1, 2, 1, 1)
+        self.grid_layout.addWidget(self.convertbtn, 1, 3, 1, 1)
+        self.grid_layout.addWidget(self.downloadbtn, 1, 4, 1, 1)
+        self.grid_layout.addWidget(self.downloadVideobtn, 1, 5, 1, 1)
+        self.grid_layout.addWidget(self.downloadlistbtn, 1, 6, 1, 1)
+        self.grid_layout.addWidget(self.downloadchannelbtn, 1, 7, 1, 1)
+        self.grid_layout.addWidget(self.downloadPathBtn, 1, 8, 1, 1)
         
-        self.grid_layout.addWidget(self.tableview, 1, 0, 1, 7)
+        self.grid_layout.addWidget(self.tableview, 2, 1, 2, 8)
         
 
         # initializing layout
@@ -203,7 +220,9 @@ class Main(QMainWindow):
         tablemodel = Model(self.tabledata, header, self)
         tv.setModel(tablemodel)
         hh = tv.horizontalHeader()
-        tv.resizeRowsToContents()
+        #tv.resizeRowsToContents()
+        hh.setStretchLastSection(True)
+        hh.setSectionResizeMode(QHeaderView.Stretch)
         
         return tv
 
@@ -343,18 +362,28 @@ class Main(QMainWindow):
                 thread.start()
                 self.addTableEntry(fr.path,fr.outfile,"complete")
                 self.refreshTableView()
-        except:
-            print("An error has occurred")
+        except Exception as e:
+            print("An error has occurred:",e)
     
     def DownloadVideo(self,link):
-        youtubeObject = YouTube(link,on_progress_callback=on_progress)
-        youtubeObject = youtubeObject.streams.get_highest_resolution()
-        self.downloadFile = youtubeObject.default_filename
-        
         try:
+            youtubeObject = YouTube(link,on_progress_callback=on_progress)
+            youtubeObject = youtubeObject.streams.get_highest_resolution()
+            self.downloadFile = youtubeObject.default_filename
             youtubeObject.download(self.downloadpath)
-        except:
-            print("An error has occurred")    
+        except Exception as e:
+            print("An error has occurred:",e) 
+            print("Trying to download using another method.")
+            self.DownloadVideo1(link)
+
+    def DownloadVideo1(self,link):
+        try:
+            ydl_opts = {}
+            with YoutubeDL(ydl_opts) as ydl:
+                ydl.download([link])
+        except Exception as e:
+            print("An error has occurred:",e) 
+            
             
     def downloadAndConvert(self):
         dlg = YoutubeDialog("Download youtube Audio","Enter youtube link")
@@ -373,10 +402,10 @@ class Main(QMainWindow):
             print("Cancel!")        
             
     def downloadList(self):
-        dlg = YoutubeDialog("Download youtube playlist","Enter youtube playlist link")
+        dlg = YoutubeDialog("Download youtube playlist","Enter youtube playlist link",True)
         if dlg.exec():
             print("lets Download youtube List URL:",dlg.url)
-            downloadPlaylist(dlg.url,self.downloadpath)
+            downloadPlaylist(dlg.url,self.downloadpath,dlg.downloadVideo)
         else:
             print("Cancel!")     
     
@@ -410,12 +439,20 @@ class Main(QMainWindow):
 if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
+    
+    darkTheme = True
+    if (darkTheme):
+      file = QFile(":/dark/stylesheet.qss")
+      file.open(QFile.ReadOnly | QFile.Text)
+      stream = QTextStream(file)
+      app.setStyleSheet(stream.readAll())
+      
     main = Main()
     
     screen = app.primaryScreen()
     size = screen.size()
-    main.resize(int(size.width()*.8),int(size.height()*.4))
-    #main.showMaximized()
+    #main.resize(int(size.width()*.8),int(size.height()*.4))
+    main.showMaximized()
     
     main.show()
     app.exec_()

@@ -12,6 +12,7 @@ links = []
 link = []
 size = 0
 downloadpath = str(Path.home() / "Downloads")
+downloadvideo = False
 files = [[],[],[],[]]
 
 class FileRecord:
@@ -30,55 +31,75 @@ def MP4ToMP3(mp4, mp3):
 
 def downloader1():
     for i in link[0]:
-      yt = YouTube(i)
-      #ys = yt.streams.get_highest_resolution()
-      ys = yt.streams.get_audio_only()
-      filename = ys.download(downloadpath)
-      print("threading 1 -->  " + filename.split('/')[-1] + ' Downloaded')
-      files[0].append(filename.split('/')[-1])  
-
+        try: 
+          yt = YouTube(i)
+          ys = yt.streams.get_audio_only()
+          if downloadvideo:
+            ys = yt.streams.get_highest_resolution()
+          filename = ys.download(downloadpath)
+          print("threading 1 -->  " + filename.split('/')[-1] + ' Downloaded')
+          files[0].append(filename.split('/')[-1])  
+        except Exception as e:
+            print("An error has occurred:",e)   
+            
 def downloader2():
     if (len(link)<=1):
         return
+        
     for i in link[1]:
-      yt = YouTube(i)
-      #ys = yt.streams.get_highest_resolution()
-      ys = yt.streams.get_audio_only()
-      filename = ys.download(downloadpath)
-      print("threading 2 -->  " + filename.split('/')[-1] + ' Downloaded')
-      files[1].append(filename.split('/')[-1])  
-
+        try:
+          yt = YouTube(i)
+          ys = yt.streams.get_audio_only()
+          if downloadvideo:
+            ys = yt.streams.get_highest_resolution()
+          filename = ys.download(downloadpath)
+          print("threading 2 -->  " + filename.split('/')[-1] + ' Downloaded')
+          files[1].append(filename.split('/')[-1])  
+        except Exception as e:
+            print("An error has occurred:",e)  
+      
 def downloader3():
     if (len(link)<=2):
         return
     for i in link[2]:
-      yt = YouTube(i)
-      #ys = yt.streams.get_highest_resolution()
-      ys = yt.streams.get_audio_only()
-      filename = ys.download(downloadpath)
-      print("threading 3 -->  " + filename.split('/')[-1] + ' Downloaded')
-      files[2].append(filename.split('/')[-1])  
+        try:
+          yt = YouTube(i)
+          ys = yt.streams.get_audio_only()
+          if downloadvideo:
+            ys = yt.streams.get_highest_resolution()
+          filename = ys.download(downloadpath)
+          print("threading 3 -->  " + filename.split('/')[-1] + ' Downloaded')
+          files[2].append(filename.split('/')[-1])  
+        except Exception as e:
+            print("An error has occurred:",e)  
 
 def downloader4():
     if (len(link)<=3):
         return
     for i in link[3]:
-      yt = YouTube(i)
-      #ys = yt.streams.get_highest_resolution()
-      ys = yt.streams.get_audio_only()
-      filename = ys.download(downloadpath)
-      print("threading 4 -->  " + filename.split('/')[-1] + ' Downloaded')
-      files[3].append(filename.split('/')[-1])  
+        try:
+          yt = YouTube(i)
+          ys = yt.streams.get_audio_only()
+          if downloadvideo:
+            ys = yt.streams.get_highest_resolution()
+          filename = ys.download(downloadpath)
+          print("threading 4 -->  " + filename.split('/')[-1] + ' Downloaded')
+          files[3].append(filename.split('/')[-1]) 
+        except Exception as e:
+                    print("An error has occurred:",e)            
 
 def split_link(links,size):
     for i in range(0,len(links),size):
         yield links[i:i+size]
       
-def downloadPlaylist(url,refpath): 
+def downloadPlaylist(url,refpath,downloadvideoFlag=False): 
     global links
     global link
     global downloadpath
+    global downloadvideo
+    
     downloadpath = refpath
+    downloadvideo = downloadvideoFlag
     
     try:
         p = Playlist(url)
