@@ -161,6 +161,8 @@ class Main(QMainWindow):
 
         # create gridlayout
         self.grid_layout = QGridLayout()
+        self.grid_layout.setContentsMargins(5,5,5,5)
+        
         self.grid_layout.addWidget(self.clearBtn, 1, 1, 1, 1)
         self.grid_layout.addWidget(self.importbtn, 1, 2, 1, 1)
         self.grid_layout.addWidget(self.convertbtn, 1, 3, 1, 1)
