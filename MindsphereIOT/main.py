@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import *
 from threading import Thread,Event
 import requests
 from requests.auth import HTTPDigestAuth
-from datetime import datetime
+from datetime import date,datetime,timedelta
 import json
 import breeze_resources
 import os
 import copy 
+from MyCalendar import *
 
 url = "https://gateway.eu1-int.mindsphere.io/api/assetmanagement/v3/assettypes"
 myToken = 'eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vZHRjbHhpbnQucGlhbS5ldTEtaW50Lm1pbmRzcGhlcmUuaW8vdG9rZW5fa2V5cyIsImtpZCI6ImtleS1pZC02IiwidHlwIjoiSldUIn0.eyJqdGkiOiI3NWMzYjMwNjA3N2Q0NDZjYjFkZGI4NDZjOTYxNDBmMiIsInN1YiI6InRlY2h1c2VyMS1kdGNseGludCIsInNjb3BlIjpbIm1kc3A6Y29yZTpBZG1pbjNyZFBhcnR5VGVjaFVzZXIiXSwiY2xpZW50X2lkIjoidGVjaHVzZXIxLWR0Y2x4aW50IiwiY2lkIjoidGVjaHVzZXIxLWR0Y2x4aW50IiwiYXpwIjoidGVjaHVzZXIxLWR0Y2x4aW50IiwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInJldl9zaWciOiI4OWQxNzgzIiwiaWF0IjoxNjg2NjUwNDA3LCJleHAiOjE2ODY2NTIyMDcsImlzcyI6Imh0dHBzOi8vZHRjbHhpbnQucGlhbS5ldTEtaW50Lm1pbmRzcGhlcmUuaW8vb2F1dGgvdG9rZW4iLCJ6aWQiOiJkdGNseGludCIsImF1ZCI6WyJ0ZWNodXNlcjEtZHRjbHhpbnQiXSwidGVuIjoiZHRjbHhpbnQiLCJzY2hlbWFzIjpbInVybjpzaWVtZW5zOm1pbmRzcGhlcmU6aWFtOnYxIl0sImNhdCI6ImNsaWVudC10b2tlbjp2MSJ9.bxwT5q7RKhfUWjZw40XPYVi_gDYua_7SPRL2ZhAaHqF5S6SZXfGCUhDKnnjEnZoBtpBYfq8VpA9rXDzQ8At_3jahw0IZ3V-HZ_kLP07qoDAf5TeaulZeh2Fc5jkgq5-b7-U12mVz1NE5r8Jzft9ynvZZX3_LJcS_MwULaO7qsF6HzZqokfns_LEqQAT9UtxaFa-jWztcMCXFQgFLcDZhWk2O5T4TFT7s0p08qhtWLOs1-0sGPitE4nyccdK2cD4LfYnA-erOCuaNpZI0yY-vCADqxJV3Yp66HZCuUzz2n4Syb-iIFRvybi5G7ytvssML46Zs9mFQJ3gMz3W_5JcuLw'
@@ -95,13 +96,15 @@ class stackedExample(QWidget):
       self.leftlist.insertItem (6, '7 Update Digital Twin Template' )
       self.leftlist.insertItem (7, '8 Get All aggregates for DT Model' )
       self.leftlist.insertItem (8, '9 Create aggregates' )
+      self.leftlist.insertItem (9, '10 Create Sensor Data' )
 
       sizepolicyleft = QSizePolicy(QSizePolicy.Preferred,QSizePolicy.Preferred)
       sizepolicyleft.setHorizontalStretch(1)
       self.leftlist.setSizePolicy(sizepolicyleft)
 		
+      self.stackpagesCount = 10
       self.stacks = []
-      for i in range(0,9):
+      for i in range(0,self.stackpagesCount):
          stack = QWidget()
          self.stacks.append(stack)
 		
@@ -113,10 +116,11 @@ class stackedExample(QWidget):
       self.stack5UI()
       self.stack7UI()
       self.stack8UI()
+      self.stack9UI()
 
       self.Stack = QStackedWidget (self)
 
-      for i in range(0,9):
+      for i in range(0,self.stackpagesCount):
          self.Stack.addWidget(self.stacks[i])
       
 
@@ -348,8 +352,8 @@ class stackedExample(QWidget):
       self.dtaggregatesTable.itemDoubleClicked.connect(self.onAggregateItemDoubleClicked)
       self.dtaggregatesTable.setContextMenuPolicy(Qt.CustomContextMenu) 
       self.dtaggregatesTable.customContextMenuRequested.connect(self.showAggregateOptions)
-      self.dtaggregatesTable.setColumnCount(5)
-      self.dtaggregatesTable.setHorizontalHeaderLabels(["ID","tenantId","creator","creationDate","physicalVariable"])
+      self.dtaggregatesTable.setColumnCount(6)
+      self.dtaggregatesTable.setHorizontalHeaderLabels(["ID","tenantId","creator","creationDate","physicalVariable","Status"])
       self.dtaggregatesTable.horizontalHeader().setStretchLastSection(True)
       self.dtaggregatesTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
       
@@ -484,9 +488,11 @@ class stackedExample(QWidget):
          self.getAssetsFunc()
          for i in range(self.assetslist.count()):
             self.newAssetType.addItem(self.assetslist.item(i).text())
+            self.newAssetType1.addItem(self.assetslist.item(i).text())
       else:
          for i in range(self.assetslist.count()):
             self.newAssetType.addItem(self.assetslist.item(i).text())
+            self.newAssetType1.addItem(self.assetslist.item(i).text())
 
    def loadAssetVariableFunc(self):
       assetindex = self.newAssetType.currentIndex()
@@ -842,6 +848,7 @@ class stackedExample(QWidget):
       self.dtAGDetailsText.setText("")
       if (myResponse.ok):
          jData = json.loads(myResponse.content)
+         self.dtAGDetailsText.setText(json.dumps(jData,indent=4))
          rc=0
          if '_embedded' in jData:
             if 'dtAggregates' in jData['_embedded']:
@@ -852,6 +859,7 @@ class stackedExample(QWidget):
                   self.dtaggregatesTable.setItem(rc,2,QTableWidgetItem(i['creator']))
                   self.dtaggregatesTable.setItem(rc,3,QTableWidgetItem(i['creationDate']))
                   self.dtaggregatesTable.setItem(rc,4,QTableWidgetItem(i['physicalVariable']))
+                  self.dtaggregatesTable.setItem(rc,5,QTableWidgetItem(i['status']['name']))
                   rc+=1
          else:
             self.dtAGDetailsText.setText("NO AGGREGATES FOR THIS DTT!")
@@ -946,13 +954,15 @@ class stackedExample(QWidget):
       layout.addWidget(self.aggNametext)
       layout.addWidget(QLabel("Start TimeStamp:"))
       self.startTimeEdit = QDateTimeEdit(QDate.currentDate().addDays(-2))
+      self.startTimeEdit.setMaximumWidth(300)
       self.startTimeEdit.setCalendarPopup(True)
-      self.startTimeEdit.setDisplayFormat("dd-mm-yyyy   hh:mm:ss")
+      self.startTimeEdit.setDisplayFormat("dd-MM-yyyy   hh:mm:ss")
       layout.addWidget(self.startTimeEdit)
       layout.addWidget(QLabel("End TimeStamp:"))
       self.endTimeEdit = QDateTimeEdit(QDate.currentDate().addDays(-1))
+      self.endTimeEdit.setMaximumWidth(300)
       self.endTimeEdit.setCalendarPopup(True)
-      self.endTimeEdit.setDisplayFormat("dd-mm-yyyy   hh:mm:ss")
+      self.endTimeEdit.setDisplayFormat("dd-MM-yyyy   hh:mm:ss")
       layout.addWidget(self.endTimeEdit)
       self.createAggBtn = QPushButton("Create Aggregate")
       self.createAggBtn.clicked.connect(self.createAggBtnFunc)
@@ -1020,6 +1030,130 @@ class stackedExample(QWidget):
       self.physicalVariabletext.setText(physicalVariable)
       aggName = datetime.now().strftime('%Y%m%d%H%M%S')
       self.aggNametext.setText("Aggregate_"+aggName)
+
+   def stack9UI(self):
+      spacing = 15
+      layout = QVBoxLayout()
+      layout.addWidget(QLabel("Select Asset Type:"))
+      self.newAssetType1 = ComboBox()
+      self.newAssetType1.popupAboutToBeShown.connect(self.loadAssetTypeFunc)
+      self.newAssetType1.currentIndexChanged.connect(self.loadAssetVariableFunc1)
+      layout.addWidget(self.newAssetType1)
+      layout.addSpacing(spacing)
+      layout.addWidget(QLabel("Set Variable values:"))
+      self.assetInfoTable1 = QTableWidget()
+      self.assetInfoTable1.setColumnCount(6)
+      self.assetInfoTable1.setHorizontalHeaderLabels(["Variable Name","Unit","DataType","AspectID","AspectName","New Value"])
+      self.assetInfoTable1.horizontalHeader().setStretchLastSection(True)
+      self.assetInfoTable1.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+      layout.addWidget(self.assetInfoTable1)
+      layout.addSpacing(spacing)
+      layout.addWidget(QLabel("Start TimeStamp:"))
+      self.startTimeEdit1 = QDateTimeEdit(QDate.currentDate().addDays(-2))
+      self.startTimeEdit1.setMaximumWidth(300)
+      self.startTimeEdit1.setCalendarPopup(True)
+      self.startTimeEdit1.setDisplayFormat("dd-MM-yyyy   hh:mm:ss")
+      layout.addWidget(self.startTimeEdit1)
+      layout.addWidget(QLabel("End TimeStamp:"))
+      self.endTimeEdit1 = QDateTimeEdit(QDate.currentDate())
+      self.endTimeEdit1.setMaximumWidth(300)
+      self.endTimeEdit1.setCalendarPopup(True)
+      self.endTimeEdit1.setDisplayFormat("dd-MM-yyyy   hh:mm:ss")
+      layout.addWidget(self.endTimeEdit1)
+      layout.addSpacing(spacing)
+      self.createSensorDataBtn = QPushButton("Create Sensor Data")
+      self.createSensorDataBtn.clicked.connect(self.createSensorDataBtnFunc)
+      layout.addWidget(self.createSensorDataBtn)
+      self.exportSensorDataBtn = QPushButton("Export Sensor Data")
+      self.exportSensorDataBtn.clicked.connect(self.exportSensorDataBtnFunc)
+      layout.addWidget(self.exportSensorDataBtn)
+
+      layout.addSpacing(spacing)
+      self.sensorDataText = QTextEdit()
+      layout.addWidget(self.sensorDataText,stretch=1)
+      self.stacks[9].setLayout(layout)  
+
+   def loadAssetVariableFunc1(self):
+      assetindex = self.newAssetType1.currentIndex()
+      assetId = self.assetids[assetindex]
+
+      global head2
+      url = 'https://gateway.eu1-int.mindsphere.io/api/assetmanagement/v3/assettypes/' + assetId
+      myResponse = requests.get(url, headers=head2)
+      if(myResponse.ok):
+         jData = json.loads(myResponse.content)
+         self.assetInfo.setText(json.dumps(jData,indent=4))
+
+         self.assetInfoTable1.clearContents()
+         self.assetInfoTable1.setRowCount(0)
+         rc = 0
+         aspects = jData['aspects']
+         for a in aspects:
+               aa = a['aspectType']
+               aid = a['aspectId']
+               aname = a['name']
+               for p in aa['variables']:
+                     vname = p['name']
+                     vunit = p['unit']
+                     vtype = p['dataType']
+                     
+                     self.assetInfoTable1.insertRow(self.assetInfoTable1.rowCount())
+                     self.assetInfoTable1.setItem(rc,0,QTableWidgetItem(vname))
+                     self.assetInfoTable1.setItem(rc,1,QTableWidgetItem(vunit))
+                     self.assetInfoTable1.setItem(rc,2,QTableWidgetItem(vtype))
+                     self.assetInfoTable1.setItem(rc,3,QTableWidgetItem(aid))
+                     self.assetInfoTable1.setItem(rc,4,QTableWidgetItem(aname))
+                     rc+=1
+
+   def daterange(self,start_date, end_date):
+      for n in range(int((end_date - start_date).days)):
+         yield start_date + timedelta(n)
+
+   def createSensorDataBtnFunc(self):
+      self.sensorDataText.setText("")
+      data = {}
+      
+      for i in range(0,self.assetInfoTable1.rowCount()):
+         varname = self.assetInfoTable1.item(i,0)
+         newvalue = self.assetInfoTable1.item(i,5)
+         if newvalue:
+            str = newvalue.text()
+            varname = varname.text()
+            if str:
+               if str.isnumeric():
+                  data[varname] = int(str)
+               else:
+                  data[varname] = str
+
+      if not data:
+         self.showErrorMsg("Please update variable values")
+         return
+      
+      json_data_list = []
+      start_date = self.startTimeEdit1.dateTime().toPyDateTime()
+      end_date = self.endTimeEdit1.dateTime().toPyDateTime()
+      
+      for single_date in self.daterange(start_date, end_date):
+         timestr = single_date.strftime("%Y_%m_%dT%H:%M:%S")
+         datacopy = copy.deepcopy(data)
+         datacopy['Time'] = timestr
+         json_data_list.append(datacopy)
+
+      self.sensorDataText.setText(json.dumps(json_data_list,indent=2))
+
+   def exportSensorDataBtnFunc(self):
+      data = self.sensorDataText.toPlainText()
+      if data == "":
+         self.showErrorMsg("No data to export")
+         return
+      options = QFileDialog.Options()
+      options |= QFileDialog.DontUseNativeDialog
+      file_name, _ = QFileDialog.getSaveFileName(self,"Save File","","All Files(*);;Text Files(*.txt)",options = options)
+      if file_name:
+        f = open(file_name, 'w')
+        f.write(data)
+        f.close()
+
 
 def main():
    app = QApplication(sys.argv)

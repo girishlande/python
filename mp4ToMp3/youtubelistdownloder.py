@@ -34,8 +34,8 @@ def downloader1():
         try: 
           yt = YouTube(i)
           ys = yt.streams.get_audio_only()
-          if downloadvideo:
-            ys = yt.streams.get_highest_resolution()
+          #if downloadvideo:
+          #  ys = yt.streams.get_highest_resolution()
           filename = ys.download(downloadpath)
           print("threading 1 -->  " + filename.split('/')[-1] + ' Downloaded')
           files[0].append(filename.split('/')[-1])  
@@ -50,8 +50,8 @@ def downloader2():
         try:
           yt = YouTube(i)
           ys = yt.streams.get_audio_only()
-          if downloadvideo:
-            ys = yt.streams.get_highest_resolution()
+          #if downloadvideo:
+          #  ys = yt.streams.get_highest_resolution()
           filename = ys.download(downloadpath)
           print("threading 2 -->  " + filename.split('/')[-1] + ' Downloaded')
           files[1].append(filename.split('/')[-1])  
@@ -65,8 +65,8 @@ def downloader3():
         try:
           yt = YouTube(i)
           ys = yt.streams.get_audio_only()
-          if downloadvideo:
-            ys = yt.streams.get_highest_resolution()
+          #if downloadvideo:
+          #  ys = yt.streams.get_highest_resolution()
           filename = ys.download(downloadpath)
           print("threading 3 -->  " + filename.split('/')[-1] + ' Downloaded')
           files[2].append(filename.split('/')[-1])  
@@ -80,8 +80,8 @@ def downloader4():
         try:
           yt = YouTube(i)
           ys = yt.streams.get_audio_only()
-          if downloadvideo:
-            ys = yt.streams.get_highest_resolution()
+          #if downloadvideo:
+          #  ys = yt.streams.get_highest_resolution()
           filename = ys.download(downloadpath)
           print("threading 4 -->  " + filename.split('/')[-1] + ' Downloaded')
           files[3].append(filename.split('/')[-1]) 
