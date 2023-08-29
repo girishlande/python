@@ -101,19 +101,19 @@ with __stickytape_temporary_dir() as __stickytape_working_dir:
         avg = sum/(days)
         diff = curr - avg
         per = diff / avg * 100
-        nshare = math.floor(10000/curr)
+        nshare = math.floor(50000/curr)
    
         h = df["52 Week High Price"].tail(1)
         print(stockname)
         print(x)
-        print("AVG:{:.2f}".format(avg)," P:{:.2f}".format(per)," #share:",nshare,"AllTimehigh :",h[0])
-        print("CURR:{:.2f}".format(curr)," LOW:{:.2f}".format(lowest)," HIGH:{:.2f}".format(highest))
+        print("LOW:{:.2f}".format(lowest)," HIGH:{:.2f}".format(highest)," AVG:{:.2f}".format(avg)," AllTime:",h[0])
+        print("CUR:{:.2f}".format(curr)," P:{:.2f}".format(per)," CNT:",nshare)
         
         sum5 = 0.0
         for v in avg5:
             sum5+=v
         if sum5 < -2.0:
-           print("RECOMMENDED SHARE")     
+           print("#RECOMMENDED SHARE")     
         print()
        
            
@@ -142,7 +142,6 @@ with __stickytape_temporary_dir() as __stickytape_working_dir:
     ml.append("LT")
     ml.append("INFY")
     ml.append("TCS")
-    ml.append("BOSCHLTD")
     ml.append("EICHERMOT")
     ml.append("SIEMENS")
     ml.append("TATASTEEL")
@@ -156,9 +155,16 @@ with __stickytape_temporary_dir() as __stickytape_working_dir:
     ml.append("ICICIBANK")
     ml.append("HDFCBANK")
     ml.append("OLECTRA")
-    ml.append("PATELENG")
     ml.append("BAJAJFINSV")
     ml.append("PTC")
+    ml.append("BEL")
+    ml.append("SJVN")
+    ml.append("PEL")
+    ml.append("VEDL")
+    ml.append("RAILTEL")
+    ml.append("JINDALSTEL")
+    ml.append("SHOPERSTOP")
+    
     
     
     
@@ -180,6 +186,7 @@ with __stickytape_temporary_dir() as __stickytape_working_dir:
 
         for i in ml:
             printAverage(i,startdate,enddate,ndays)
-  
-
+        
+    sys.stdout = sys.__stdout__
+    print("Done")
    

@@ -4,4 +4,4 @@
 
 setlocal
 
-start /B python converter.py 
+start /B py converter.py 
